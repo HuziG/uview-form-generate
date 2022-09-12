@@ -2,10 +2,10 @@ import type { FormConfigType } from '../form.config'
 
 const datetimePicker = {
   __config__: {
-    label: 'DatetimePicker 选择器',
+    label: 'Calendar 日历',
   },
   __form__: {
-    label: '时间选择',
+    label: '日期选择',
     prop: '',
   },
   __rules__: {
@@ -19,19 +19,19 @@ const datetimePicker = {
       key: 'placeholder',
       label: '占位提示',
       type: 'input',
-      value: '请选择时间',
+      value: '请选择日期',
     },
     mode: {
       key: 'mode',
       type: 'select',
-      label: '时间选择类型',
+      label: '日期选择类型',
       value: 'datetime',
       options: [{
-        label: 'date', value: 'date',
+        label: 'single', value: 'single',
       }, {
-        label: 'time', value: 'time',
+        label: 'multiple', value: 'multiple',
       }, {
-        label: 'year-month', value: 'year-month',
+        label: 'range', value: 'range',
       }],
     },
     visibleName: {
@@ -72,11 +72,11 @@ const datetimePicker = {
   },
   __html_pick__: (ele: FormConfigType) => {
     return `
-      <u-datetime-picker
+      <u-calendar
         :show="${ele.__attr__.visibleName.value}"
         v-model="formData.${ele.__form__.prop}"
         mode="${ele.__attr__.mode.value}"
-      ></u-datetime-picker>
+      ></u-calendar>
     `
   },
   __js_method__: () => {

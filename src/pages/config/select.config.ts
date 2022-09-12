@@ -3,7 +3,7 @@ import { upCaseWord } from '~/utils/utils'
 
 const selectConfig = {
   __config__: {
-    label: 'Input 选择',
+    label: 'Select 选择',
   },
   __form__: {
     label: '选择',

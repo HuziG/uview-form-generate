@@ -2,6 +2,7 @@ import datetimePicker from './config/datetimePicker.config'
 import inputConfig from './config/input.config'
 import selectConfig from './config/select.config'
 import switchConfig from './config/switch.config'
+import calendarConfig from './config/calendar.config'
 
 export interface SelectConfigType {
   visibleName: {
@@ -85,4 +86,5 @@ export const FormConfigList = [
   selectConfig,
   switchConfig,
   datetimePicker,
+  calendarConfig,
 ]
