@@ -1,5 +1,6 @@
 import datetimePicker from './config/datetimePicker.config'
 import inputConfig from './config/input.config'
+import textareaConfig from './config/textarea.config'
 import selectConfig from './config/select.config'
 import switchConfig from './config/switch.config'
 import calendarConfig from './config/calendar.config'
@@ -26,6 +27,9 @@ export interface SelectConfigType {
 }
 
 export interface FormConfigType {
+  __config__: {
+    document?: string | undefined
+  }
   __form__: {
     label: string
     prop: string
@@ -83,6 +87,7 @@ export interface FormConfigType {
 
 export const FormConfigList = [
   inputConfig,
+  textareaConfig,
   selectConfig,
   switchConfig,
   datetimePicker,

@@ -3,6 +3,7 @@ import type { FormConfigType } from '../form.config'
 const datetimePicker = {
   __config__: {
     label: 'Calendar 日历',
+    document: 'https://www.uviewui.com/components/calendar.html',
   },
   __form__: {
     label: '日期选择',
@@ -44,7 +45,7 @@ const datetimePicker = {
   __html__: (ele: FormConfigType) => {
     return `
     <u--input
-      v-model="formValue.${ele.__form__.prop}"
+      v-model="formData.${ele.__form__.prop}"
       disabled
       disabledColor="#ffffff"
       inputAlign="right"
@@ -70,17 +71,33 @@ const datetimePicker = {
     </u-form-item>
     `
   },
+  __js_data__: (ele: FormConfigType) => {
+    const { visibleName } = ele.__attr__
+    return `
+      ${visibleName.value}: false
+    `
+  },
   __html_pick__: (ele: FormConfigType) => {
     return `
       <u-calendar
         :show="${ele.__attr__.visibleName.value}"
         v-model="formData.${ele.__form__.prop}"
         mode="${ele.__attr__.mode.value}"
+        @close="${ele.__attr__.visibleName.value} = false"
+        @confirm="${ele.__form__.prop}Confirm"
       ></u-calendar>
     `
   },
-  __js_method__: () => {
-    return ''
+  __js_method__: (ele: FormConfigType) => {
+    return `
+      hideKeyboard() {
+        uni.hideKeyboard();
+      },
+      ${ele.__form__.prop}Confirm(e) {
+        this.${ele.__attr__.visibleName.value} = false
+        console.info(e)
+      }
+    `
   },
 }
 

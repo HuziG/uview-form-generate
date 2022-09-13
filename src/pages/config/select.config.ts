@@ -4,6 +4,7 @@ import { upCaseWord } from '~/utils/utils'
 const selectConfig = {
   __config__: {
     label: 'Select 选择',
+    document: 'https://www.uviewui.com/components/picker.html',
   },
   __form__: {
     label: '选择',
@@ -44,7 +45,8 @@ const selectConfig = {
   __html__: (ele: FormConfigType) => {
     return `
     <u--input
-      v-model="formValue.${ele.__form__.prop}"
+      v-model="formData.${ele.__form__.prop}"
+      inputAlign="right"
       disabled
       disabledColor="#ffffff"
       placeholder="${ele.__attr__.placeholder.value}"
@@ -71,11 +73,13 @@ const selectConfig = {
   __html_pick__: (ele: FormConfigType) => {
     return `
       <u-picker 
-          :show="${ele.__attr__.visibleName.value}"
-          :actions="${ele.__attr__.actionName.value}"
-          @close="${ele.__attr__.visibleName.value} = false"
-          @confirm="${ele.__attr__.selectFunName.value}"
-          keyName="label"
+        :show="${ele.__attr__.visibleName.value}"
+        :actions="${ele.__attr__.actionName.value}"
+        @cancel="${ele.__attr__.visibleName.value} = false"
+        @close="${ele.__attr__.visibleName.value} = false"
+        @confirm="${ele.__attr__.selectFunName.value}"
+        closeOnClickOverlay
+        keyName="label"
         >
       </u-picker>
     `
@@ -83,17 +87,24 @@ const selectConfig = {
   __js_data__: (ele: FormConfigType) => {
     const { visibleName, actionName } = ele.__attr__
     return `
-      ${visibleName.value}: '',
-      ${actionName.value}: ''
+      ${visibleName.value}: false,
+      ${actionName.value}: []
     `
   },
   __js_method__: (ele: FormConfigType) => {
-    return `
-      set${upCaseWord(ele.__attr__.actionName.value)}() {
+    const { actionName, selectFunName, visibleName } = ele.__attr__
+    const { prop } = ele.__form__
 
+    return `
+      set${upCaseWord(actionName.value)}() {
+        this.${actionName.value} = []
       },
-      ${ele.__attr__.selectFunName.value}(e) {
-        this.formValue.${ele.__form__.prop} = e.name
+      ${selectFunName.value}(e) {
+        this.${visibleName.value} = false
+        this.formData.${prop} = e.name
+      },
+      hideKeyboard() {
+        uni.hideKeyboard();
       },
     `
   },

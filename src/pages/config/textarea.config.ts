@@ -2,11 +2,11 @@ import type { FormConfigType } from '../form.config'
 
 const inputConfig = {
   __config__: {
-    label: 'Input 输入框',
-    document: 'https://www.uviewui.com/components/input.html',
+    label: 'Textarea 文本域',
+    document: 'https://www.uviewui.com/components/textarea.html',
   },
   __form__: {
-    label: '单行文本',
+    label: '文本域',
     prop: '',
   },
   __rules__: {
@@ -20,35 +20,20 @@ const inputConfig = {
       key: 'placeholder',
       label: '占位提示',
       type: 'input',
-      value: '请输入',
-    },
-    type: {
-      key: 'select',
-      label: '类型',
-      type: 'select',
-      value: 'text',
-      options: [{
-        label: 'text', value: 'text',
-      }, {
-        label: 'number', value: 'number',
-      }, {
-        label: 'password', value: 'password',
-      }, {
-        label: 'digit', value: 'digit',
-      }, {
-        label: 'idcard', value: 'idcard',
-      }],
+      value: '请输入内容',
     },
   },
   __html__: (ele: FormConfigType) => {
     return `
-      <u--input
+      <u--textarea
         v-model="formData.${ele.__form__.prop}"
         placeholder="${ele.__attr__.placeholder.value}"
-        inputAlign="right"
+        autoHeight
         border="none"
         clearable
-      ></u--input>
+        count
+        maxlength="200"
+      ></u--textarea>
     `
   },
   __html_form__: (ele: FormConfigType, child: any) => {

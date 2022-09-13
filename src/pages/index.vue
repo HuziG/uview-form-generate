@@ -5,8 +5,21 @@ import type { FormConfigType, SelectConfigType } from './form.config'
 import { FormConfigList } from './form.config'
 import generateMixins from './mixins/generate.mixin'
 
+const LOCAL_CONFIG_KEY = 'uview_form_generate_config_list'
+
 const list2 = ref<FormConfigType[]>([])
 const editForm = ref<FormConfigType>()
+
+const editFormLoading = ref(false)
+
+const handleSetAttr = (ele: any) => {
+  editFormLoading.value = true
+
+  setTimeout(() => {
+    editForm.value = ele
+    editFormLoading.value = false
+  }, 200)
+}
 
 const log = (evt: {
   added: {
@@ -15,15 +28,13 @@ const log = (evt: {
 }) => {
   list2.value = cloneDeep(list2.value)
 
-  editForm.value = list2.value[evt.added.newIndex]
+  handleSetAttr(list2.value[evt.added.newIndex])
 
   window.console.log(evt)
 }
 
-const handleSetAttr = (ele: any) => {
-  window.console.log(ele)
-
-  editForm.value = ele
+const localSessionConfig = () => {
+  localStorage[LOCAL_CONFIG_KEY] = JSON.stringify(list2.value)
 }
 
 const del = (index: number) => {
@@ -54,6 +65,12 @@ const pasteValue = async (key1: string, key2: string) => {
     editForm.value[key1 as keyof FormConfigType][key2] = value
 }
 
+// open document
+const documentOpen = (url: string | undefined) => {
+  if (url)
+    window.open(url)
+}
+
 const {
   setSourceData, getGeneratedCode, copyCode,
 } = generateMixins()
@@ -62,6 +79,21 @@ const handleGenerateCode = (fun: any) => {
   setSourceData(list2.value)
   copyCode(fun)
 }
+
+// 清空缓存
+const clearLocalStorage = () => {
+  localStorage.removeItem(LOCAL_CONFIG_KEY)
+}
+
+// mounted
+onMounted(() => {
+  if (localStorage[LOCAL_CONFIG_KEY])
+    list2.value = JSON.parse(localStorage[LOCAL_CONFIG_KEY])
+
+  setInterval(() => {
+    localSessionConfig()
+  }, 5000)
+})
 </script>
 
 <template>
@@ -70,6 +102,10 @@ const handleGenerateCode = (fun: any) => {
       <n-space>
         <n-button quaternary type="primary" @click="handleGenerateCode(getGeneratedCode)">
           生成完整代码
+        </n-button>
+
+        <n-button quaternary type="primary" @click="clearLocalStorage">
+          清空缓存
         </n-button>
       </n-space>
     </div>
@@ -126,94 +162,99 @@ const handleGenerateCode = (fun: any) => {
       </div>
 
       <div p-5 overflow-y-scroll style="width: 400px;" hidden xl:inline-block>
-        <template v-if="editForm">
-          <n-form :model="editForm">
-            <div bg-purple-500 text-white py-1 px-2 rounded mb-5>
-              统一设置
-            </div>
+        <n-spin :show="editFormLoading">
+          <template v-if="editForm">
+            <n-form :model="editForm">
+              <div flex items-center justify-between bg-purple-500 text-white py-1 px-2 rounded mb-5>
+                <span>统一设置</span>
+                <span cursor-pointer hover:opacity-75 active:opacity-60>
+                  <div i-carbon:link @click="documentOpen(editForm && editForm.__config__.document)" />
+                </span>
+              </div>
 
-            <n-form-item label="左侧提示文字">
-              <n-input
-                v-model:value="editForm.__form__.label"
-              >
-                <template #suffix>
-                  <div
-                    i-carbon:cursor-1 cursor-pointer hover:opacity-75
-                    @click="pasteValue('__form__', 'label')"
-                  />
-                </template>
-              </n-input>
-            </n-form-item>
-
-            <n-form-item label="字段名">
-              <n-input
-                v-model:value="editForm.__form__.prop"
-              >
-                <template #suffix>
-                  <div
-                    i-carbon:cursor-1 cursor-pointer hover:opacity-75
-                    @click="pasteValue('__form__', 'prop')"
-                  />
-                </template>
-              </n-input>
-            </n-form-item>
-          </n-form>
-
-          <n-form v-if="editForm.__attr__" :model="editForm">
-            <div bg-purple-500 text-white py-1 px-2 rounded mb-5>
-              特别属性设置
-            </div>
-
-            <template v-for="item in editForm.__attr__" :key="item.key">
-              <n-form-item :label="item.label">
-                <template v-if="item.type === 'input'">
-                  <n-input
-                    v-model:value="editForm.__attr__[item.key].value"
-                  >
-                    <template
-                      v-if="['visibleName', 'actionName', 'selectFunName'].includes(item.key)"
-                      #suffix
-                    >
-                      <div
-                        i-carbon:magic-wand-filled cursor-pointer hover:opacity-75 hover:opacity-50
-                        @click="quickSetValue({
-                          key1: '__attr__',
-                          key2: item.key,
-                        })"
-                      />
-                    </template>
-                  </n-input>
-                </template>
-
-                <template v-if="item.type === 'select'">
-                  <n-select v-model:value="item.value" :options="item.options && item.options" />
-                </template>
+              <n-form-item label="左侧提示文字">
+                <n-input
+                  v-model:value="editForm.__form__.label"
+                >
+                  <template #suffix>
+                    <div
+                      i-carbon:cursor-1 cursor-pointer hover:opacity-75
+                      @click="pasteValue('__form__', 'label')"
+                    />
+                  </template>
+                </n-input>
               </n-form-item>
-            </template>
-          </n-form>
 
-          <n-form v-if="editForm.__rules__" :model="editForm">
-            <div bg-purple-500 text-white py-1 px-2 rounded mb-5>
-              表单校验
-            </div>
+              <n-form-item label="字段名">
+                <n-input
+                  v-model:value="editForm.__form__.prop"
+                >
+                  <template #suffix>
+                    <div
+                      i-carbon:cursor-1 cursor-pointer hover:opacity-75
+                      @click="pasteValue('__form__', 'prop')"
+                    />
+                  </template>
+                </n-input>
+              </n-form-item>
+            </n-form>
 
-            <n-form-item label="是否必填">
-              <n-switch v-model:value="editForm.__rules__.required" />
-            </n-form-item>
+            <n-form v-if="editForm.__attr__" :model="editForm">
+              <div bg-purple-500 text-white py-1 px-2 rounded mb-5>
+                特别属性设置
+              </div>
 
-            <n-form-item label="提示信息">
-              <n-input
-                v-model:value="editForm.__rules__.message"
-              />
-            </n-form-item>
+              <template v-for="item in editForm.__attr__" :key="item.key">
+                <n-form-item :label="item.label">
+                  <template v-if="item.type === 'input'">
+                    <n-input
+                      v-model:value="editForm.__attr__[item.key].value"
+                    >
+                      <template
+                        v-if="['visibleName', 'actionName', 'selectFunName'].includes(item.key)"
+                        #suffix
+                      >
+                        <div
+                          i-carbon:magic-wand-filled cursor-pointer hover:opacity-75 hover:opacity-50
+                          @click="quickSetValue({
+                            key1: '__attr__',
+                            key2: item.key,
+                          })"
+                        />
+                      </template>
+                    </n-input>
+                  </template>
 
-            <n-form-item label="正则表达式">
-              <n-input
-                v-model:value="editForm.__rules__.pattern"
-              />
-            </n-form-item>
-          </n-form>
-        </template>
+                  <template v-if="item.type === 'select'">
+                    <n-select v-model:value="item.value" :options="item.options" />
+                  </template>
+                </n-form-item>
+              </template>
+            </n-form>
+
+            <n-form v-if="editForm.__rules__" :model="editForm">
+              <div bg-purple-500 text-white py-1 px-2 rounded mb-5>
+                表单校验
+              </div>
+
+              <n-form-item label="是否必填">
+                <n-switch v-model:value="editForm.__rules__.required" />
+              </n-form-item>
+
+              <n-form-item label="提示信息">
+                <n-input
+                  v-model:value="editForm.__rules__.message"
+                />
+              </n-form-item>
+
+              <n-form-item label="正则表达式">
+                <n-input
+                  v-model:value="editForm.__rules__.pattern"
+                />
+              </n-form-item>
+            </n-form>
+          </template>
+        </n-spin>
       </div>
     </div>
   </div>

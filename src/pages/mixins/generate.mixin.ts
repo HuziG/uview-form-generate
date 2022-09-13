@@ -13,22 +13,35 @@ export default function () {
   }
 
   const generateRules = () => {
-    return sourceData.map((item: any) => {
-      return `
-        ${item.__form__.prop}: {
-          required: ${String(item.__rules__.required)},
-          message: '此为必填字段',
-          trigger: ['blur', 'change'],
-          pattern: ${item.__rules__.pattern},
-        }
-      `
+    let result = ''
+
+    sourceData.forEach((item: any) => {
+      if (item.__rules__) {
+        result += `
+          ${item.__form__.prop}: {
+            required: ${String(item.__rules__.required)},
+            message: '此为必填字段',
+            trigger: ['blur', 'change'],
+            pattern: ${item.__rules__.pattern},
+          }
+        `
+      }
     })
+
+    return result
   }
 
   const generateFormData = () => {
     return sourceData.map((item: any) => {
       return `
         ${item.__form__.prop}: ''
+      `
+    })
+  }
+
+  const generateJsData = () => {
+    return sourceData.map((item: any) => {
+      return `
         ${item.__js_data__ ? `,${item.__js_data__(item)}` : ''}
       `
     })
@@ -71,9 +84,10 @@ export default function () {
   const getGeneratedCode = () => {
     const template = `
     <template>
-      <view>
+      <view class="px-5">
         <u--form
           labelPosition="left"
+          labelWidth="100"
           :model="formData"
           :rules="formRules"
           ref="formRef"
@@ -95,6 +109,7 @@ export default function () {
             formRules: {
               ${generateRules()}
             }
+            ${generateJsData()}
           }
         },
         onLoad() {
