@@ -23,7 +23,7 @@ export default function () {
             message: '此为必填字段',
             trigger: ['blur', 'change'],
             pattern: ${item.__rules__.pattern},
-          }
+          },
         `
       }
     })
@@ -40,11 +40,13 @@ export default function () {
   }
 
   const generateJsData = () => {
-    return sourceData.map((item: any) => {
-      return `
-        ${item.__js_data__ ? `,${item.__js_data__(item)}` : ''}
-      `
+    let result = ''
+
+    sourceData.forEach((item: any) => {
+      result += `${item.__js_data__ ? `,${item.__js_data__(item)}` : ''}`
     })
+
+    return result
   }
 
   const generateMethods = () => {
@@ -57,7 +59,7 @@ export default function () {
     let result = ''
 
     sourceData.forEach((item: any) => {
-      result += item.__html_form__(item, item.__html__(item))
+      result += item.__html_form__(item, item.__html__ ? item.__html__(item) : '')
     })
 
     return result
@@ -84,7 +86,9 @@ export default function () {
   const getGeneratedCode = () => {
     const template = `
     <template>
-      <view class="px-5">
+      <view class="px-5" :style="{
+        pointerEvents: pointerEvents
+      }">
         <u--form
           labelPosition="left"
           labelWidth="100"
@@ -101,6 +105,12 @@ export default function () {
     
     <script>
       export default {
+        props: {
+          pointerEvents: {
+            type: Boolean,
+            default: false
+          }
+        },
         data() {
           return {
             formData: {
@@ -112,10 +122,28 @@ export default function () {
             ${generateJsData()}
           }
         },
-        onLoad() {
+        mounted() {
     
         },
         methods: {
+          setFormData(value) {
+            this.formData = value
+          },
+          submit() {
+            return new Promise((resolve, reject) => {
+              this.$refs.formRef
+                .validate()
+                .then(res => {
+                  uni.$u.toast('校验通过')
+                  resolve(this.formData)
+                })
+                .catch(errors => {
+                  uni.$u.toast('校验失败')
+                  reject(errors)
+                })
+            })
+          },
+          
           ${generateMethods()}
         }
       }

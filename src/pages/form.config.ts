@@ -4,6 +4,7 @@ import textareaConfig from './config/textarea.config'
 import selectConfig from './config/select.config'
 import switchConfig from './config/switch.config'
 import calendarConfig from './config/calendar.config'
+import aftersuffixConfig from './config/aftersuffix.config'
 
 export interface SelectConfigType {
   visibleName: {
@@ -92,4 +93,5 @@ export const FormConfigList = [
   switchConfig,
   datetimePicker,
   calendarConfig,
+  aftersuffixConfig,
 ]

@@ -34,11 +34,12 @@ const log = (evt: {
 }
 
 const localSessionConfig = () => {
-  localStorage[LOCAL_CONFIG_KEY] = JSON.stringify(list2.value)
+  // localStorage[LOCAL_CONFIG_KEY] = JSON.stringify(list2.value)
 }
 
 const del = (index: number) => {
   list2.value.splice(index, 1)
+  localSessionConfig()
 }
 
 // quick method
@@ -76,7 +77,7 @@ const {
 } = generateMixins()
 
 const handleGenerateCode = (fun: any) => {
-  setSourceData(list2.value)
+  setSourceData(cloneDeep(list2.value))
   copyCode(fun)
 }
 
@@ -87,9 +88,6 @@ const clearLocalStorage = () => {
 
 // mounted
 onMounted(() => {
-  if (localStorage[LOCAL_CONFIG_KEY])
-    list2.value = JSON.parse(localStorage[LOCAL_CONFIG_KEY])
-
   setInterval(() => {
     localSessionConfig()
   }, 5000)
@@ -144,7 +142,7 @@ onMounted(() => {
                 <div>
                   <span v-if="element.__rules__ && element.__rules__.required" text-red-500 mr-2>*</span>
                   <span font-bold>{{ element.__form__.label }}</span>
-                  : <span text-gray-500>{{ element.__attr__ && element.__attr__.placeholder.value }}</span>
+                  <span text-gray-500>{{ element.__attr__ && element.__attr__.placeholder.value }}</span>
                 </div>
                 <div v-if="element.__form__.prop" text-xs text-white bg-purple-500 px-1 rounded>
                   formData.{{ element.__form__.prop }}

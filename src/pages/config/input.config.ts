@@ -55,7 +55,7 @@ const inputConfig = {
     return `
     <u-form-item
       label="${ele.__form__.label}"
-      prop="formData.${ele.__form__.prop}"
+      prop="${ele.__form__.prop}"
       borderBottom
     >
       ${child}

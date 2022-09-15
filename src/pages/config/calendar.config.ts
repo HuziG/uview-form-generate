@@ -55,7 +55,7 @@ const datetimePicker = {
     ></u--input>
     <u-icon
       slot="right"
-      name="arrow-right"
+      name="arrow-down"
     ></u-icon>
     `
   },
@@ -83,6 +83,7 @@ const datetimePicker = {
         :show="${ele.__attr__.visibleName.value}"
         v-model="formData.${ele.__form__.prop}"
         mode="${ele.__attr__.mode.value}"
+        closeOnClickOverlay
         @close="${ele.__attr__.visibleName.value} = false"
         @confirm="${ele.__form__.prop}Confirm"
       ></u-calendar>

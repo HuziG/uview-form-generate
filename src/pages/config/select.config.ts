@@ -54,7 +54,7 @@ const selectConfig = {
     ></u--input>
     <u-icon
       slot="right"
-      name="arrow-right"
+      name="arrow-down"
     ></u-icon>
     `
   },
@@ -72,9 +72,9 @@ const selectConfig = {
   },
   __html_pick__: (ele: FormConfigType) => {
     return `
-      <u-picker 
+      <u-picker
         :show="${ele.__attr__.visibleName.value}"
-        :actions="${ele.__attr__.actionName.value}"
+        :columns="${ele.__attr__.actionName.value}"
         @cancel="${ele.__attr__.visibleName.value} = false"
         @close="${ele.__attr__.visibleName.value} = false"
         @confirm="${ele.__attr__.selectFunName.value}"
@@ -101,7 +101,7 @@ const selectConfig = {
       },
       ${selectFunName.value}(e) {
         this.${visibleName.value} = false
-        this.formData.${prop} = e.name
+        this.formData.${prop} = e.value[0].label
       },
       hideKeyboard() {
         uni.hideKeyboard();

@@ -63,7 +63,7 @@ const datetimePicker = {
     ></u--input>
     <u-icon
       slot="right"
-      name="arrow-right"
+      name="arrow-down"
     ></u-icon>
     `
   },
