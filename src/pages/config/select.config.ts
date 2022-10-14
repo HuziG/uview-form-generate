@@ -102,10 +102,7 @@ const selectConfig = {
       ${selectFunName.value}(e) {
         this.${visibleName.value} = false
         this.formData.${prop} = e.value[0].label
-      },
-      hideKeyboard() {
-        uni.hideKeyboard();
-      },
+      }
     `
   },
 }

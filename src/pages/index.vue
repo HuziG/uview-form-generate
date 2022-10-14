@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import cloneDeep from 'lodash/cloneDeep'
 import draggable from 'vuedraggable'
+import { useModal } from 'v-modal-hook'
 import type { FormConfigType, SelectConfigType } from './form.config'
 import { FormConfigList } from './form.config'
 import generateMixins from './mixins/generate.mixin'
@@ -86,6 +87,11 @@ const clearLocalStorage = () => {
   localStorage.removeItem(LOCAL_CONFIG_KEY)
 }
 
+const [register, { openModal }]
+  = useModal({
+    title: 'Modal!',
+  })
+
 // mounted
 onMounted(() => {
   setInterval(() => {
@@ -104,6 +110,10 @@ onMounted(() => {
 
         <n-button quaternary type="primary" @click="clearLocalStorage">
           清空缓存
+        </n-button>
+
+        <n-button quaternary type="primary" @click="openModal">
+          查看代码
         </n-button>
       </n-space>
     </div>
@@ -255,6 +265,10 @@ onMounted(() => {
         </n-spin>
       </div>
     </div>
+
+    <basicModal @register="register">
+      hello
+    </basicModal>
   </div>
 </template>
 

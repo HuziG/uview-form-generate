@@ -126,11 +126,20 @@ export default function () {
     
         },
         methods: {
+          hideKeyboard() {
+            uni.hideKeyboard();
+          },
           setFormData(value) {
             this.formData = value
           },
           submit() {
             return new Promise((resolve, reject) => {
+              const formData = cloneDeep(this.formData)
+
+              for (let key in formData) {
+                formData[key] = String(this.formData[key])
+              }
+
               this.$refs.formRef
                 .validate()
                 .then(res => {

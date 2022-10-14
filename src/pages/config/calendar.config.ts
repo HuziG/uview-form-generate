@@ -73,16 +73,25 @@ const datetimePicker = {
   },
   __js_data__: (ele: FormConfigType) => {
     const { visibleName } = ele.__attr__
+    const { prop } = ele.__form__
     return `
+      ${prop}Min: uni.$u.timeFormat(
+        Number(+new Date() - 365 * 24 * 60 * 60 * 1000),
+        'yyyy-mm-dd'
+      ),
       ${visibleName.value}: false
     `
   },
   __html_pick__: (ele: FormConfigType) => {
+    const { prop } = ele.__form__
+
     return `
       <u-calendar
         :show="${ele.__attr__.visibleName.value}"
         v-model="formData.${ele.__form__.prop}"
         mode="${ele.__attr__.mode.value}"
+        :minDate="${prop}Min"
+        monthNum="25"
         closeOnClickOverlay
         @close="${ele.__attr__.visibleName.value} = false"
         @confirm="${ele.__form__.prop}Confirm"
